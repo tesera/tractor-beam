@@ -1,14 +1,26 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.tesera.tractorbeam.MainActivity"
-    tools:ignore="MergeRootFrame" >
+    android:orientation="vertical">
 
-    <WebView
-        android:id="@+id/activity_main_webview"
+
+    <EditText
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        android:id="@+id/edit_url"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:hint="@string/hint_url"
+        android:inputType="text|textUri" />
 
-</FrameLayout>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/btn_confirm"
+        android:id="@+id/btn_confirmn"
+        android:ems="8"
+        android:layout_gravity="center_horizontal" />
+</LinearLayout>

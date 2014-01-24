@@ -2,7 +2,9 @@
 <resources>
 
     <string name="app_name">Tractor Beam</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+
+    <string name="btn_confirm">Confirm</string>
+    <string name="hint_url">Enter your URL…</string>
+    <string name="error_url">Invalid URL</string>
 
 </resources>
