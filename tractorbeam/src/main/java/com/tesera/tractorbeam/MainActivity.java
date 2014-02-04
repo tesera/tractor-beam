@@ -23,6 +23,8 @@ public class MainActivity extends Activity {
         // Enable Javascript
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
+        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+
         webView.setWebViewClient(new WebViewClient());
 
         String url = Utils.getStringFromPrefs(this, Consts.PREF_KEY_URL);
