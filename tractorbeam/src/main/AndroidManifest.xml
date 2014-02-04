@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="com.tesera.andbtiles.provider.READ" />
+    <permission android:name="com.tesera.andbtiles.provider.READ" />
 
     <application
         android:allowBackup="true"

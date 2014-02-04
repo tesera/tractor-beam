@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-.gradle
-/local.properties
-/.idea/workspace.xml
-.DS_Store
-=======
 # built application files
 *.apk
 *.ap_
@@ -29,8 +23,15 @@ local.properties
 proguard/
 
 # Intellij project files
-*.iml
-*.ipr
-*.iws
 .idea/
->>>>>>> 5868d2a0b02855584944ff6e44d0ac0340279987
+.gradle
+/*/local.properties
+/*/out
+/*/*/build
+*/build
+/*/*/production
+*.iml
+*.iws
+*.ipr
+*~
+*.swp
