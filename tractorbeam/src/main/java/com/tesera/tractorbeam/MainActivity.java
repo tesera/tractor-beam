@@ -56,6 +56,7 @@ public class MainActivity extends Activity {
                 String y = urlSegments.get(urlSegments.size() - 1).replace(".png", "");
                 String x = urlSegments.get(urlSegments.size() - 2);
                 String z = urlSegments.get(urlSegments.size() - 3);
+                String mapName = urlSegments.get(urlSegments.size() - 4);
 
                 // query the provider for a tile specified by x, y and z coordinates
                 String[] projection = new String[]{TilesContract.COLUMN_TILE_DATA};
@@ -67,8 +68,7 @@ public class MainActivity extends Activity {
                 // we need to switch to Google compatible coordinates
                 // https://gist.github.com/tmcw/4954720
                 // query the content resolver for tiles
-                // FIXME hardcoded database name
-                Uri contentProviderUri = Uri.parse(TilesContract.CONTENT_URI + "CuraH20_Phase2.mbtiles" + File.separator + TilesContract.TABLE_TILES);
+                Uri contentProviderUri = Uri.parse(TilesContract.CONTENT_URI + mapName + File.separator + TilesContract.TABLE_TILES);
                 Cursor cursor = getContentResolver().query(contentProviderUri, projection, selection, selectionArgs, null);
                 if (cursor == null || !cursor.moveToFirst())
                     return super.shouldInterceptRequest(view, url);
