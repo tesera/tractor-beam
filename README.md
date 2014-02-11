@@ -17,7 +17,7 @@ Once a url has been entered into tractor beam it will loook for a ``tractor-beam
 			maps: [
 				{
 					type: 'internet',
-					endpoint: 'http://a.tiles.mapbox.com/v3/[account].[mapid].json',
+					endpoint: 'http://api.tiles.mapbox.com/v3/[account].[mapid].json',
 					cacheMode: 'on-demand'
 				}
 			]
