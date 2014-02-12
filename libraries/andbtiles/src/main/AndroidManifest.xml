@@ -9,13 +9,6 @@
 
         <service android:name=".services.HarvesterService" />
 
-        <provider
-            android:name=".providers.TilesContentProvider"
-            android:authorities="com.tesera.andbtiles.provider"
-            android:exported="true"
-            android:multiprocess="true"
-            android:readPermission="com.tesera.andbtiles.provider.READ"
-            tools:ignore="ExportedContentProvider" />
     </application>
 
 </manifest>
