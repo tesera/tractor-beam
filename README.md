@@ -12,7 +12,6 @@ Once a url has been entered into tractor beam it will loook for a ``tractor-beam
 {
    "name":"my_application_name",
    "version":"1.0.0",
-   "url":"url_to_load",
    "maps":[
       {
          "type":"internet",
