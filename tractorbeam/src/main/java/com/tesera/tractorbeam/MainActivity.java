@@ -91,7 +91,7 @@ public class MainActivity extends Activity {
                 @Override
                 public void onClick(View v) {
                     mConfirm.setEnabled(false);
-                    String url = mUrl.getText().toString();
+                    final String url = mUrl.getText().toString();
                     if (!url.matches(Patterns.WEB_URL.pattern())) {
                         mUrl.setError(getString(R.string.error_url));
                         mUrl.requestFocus();
@@ -137,7 +137,7 @@ public class MainActivity extends Activity {
                                             // this is an async task, only load when all maps are loaded
                                             mapCounter++;
                                             if (mapCounter == configJson.getMaps().size())
-                                                loadUrl(webView, configJson.getUrl());
+                                                loadUrl(webView, url);
                                         }
 
                                         @Override
@@ -153,7 +153,7 @@ public class MainActivity extends Activity {
                                             // this is an async task, only load when all maps are loaded
                                             mapCounter++;
                                             if (mapCounter == configJson.getMaps().size())
-                                                loadUrl(webView, configJson.getUrl());
+                                                loadUrl(webView, url);
                                         }
 
                                         @Override
@@ -170,7 +170,7 @@ public class MainActivity extends Activity {
                                     // this is an async task, only load when all maps are loaded
                                     mapCounter++;
                                     if (mapCounter == configJson.getMaps().size())
-                                        loadUrl(webView, configJson.getUrl());
+                                        loadUrl(webView, url);
                                 } catch (AndbtilesException e) {
                                     mConfirm.setEnabled(false);
                                     Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
