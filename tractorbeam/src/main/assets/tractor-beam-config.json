@@ -1,17 +1,16 @@
 {
-   "name":"my application name",
-   "version":"1.0.0",
-   "url":"http://bl.ocks.org/whyvez/raw/8956428/",
-   "maps":[
-      {
-         "type":"internet",
-         "endpoint":"http://api.tiles.mapbox.com/v3/tesera.h0bo6h7n.json",
-         "cacheMode":"on-demand"
-      },
-      {
-         "type":"internet",
-         "endpoint":"http://api.tiles.mapbox.com/v3/tesera.RMWB_concepts.json",
-         "cacheMode":"on-demand"
-      }
-   ]
-}
+    "name":"my application name",
+    "version":"1.0.0",
+    "maps":[
+       {
+          "type":"internet",
+          "endpoint":"http://api.tiles.mapbox.com/v3/tesera.h0bo6h7n.json",
+          "cacheMode":"on-demand"
+       },
+       {
+          "type":"internet",
+          "endpoint":"http://api.tiles.mapbox.com/v3/tesera.RMWB_concepts.json",
+          "cacheMode":"on-demand"
+       }
+    ]
+ }

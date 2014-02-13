@@ -1,13 +1,19 @@
 package com.tesera.tractorbeam;
 
 import android.app.Activity;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Patterns;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -33,7 +39,6 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
         // initialize the andbtiles library
         final Andbtiles andbtiles = new Andbtiles(this);
@@ -76,83 +81,109 @@ public class MainActivity extends Activity {
             }
         });
 
-        // parse the tractor-beam-config.json
-        InputStream inputStream;
-        try {
-            inputStream = getAssets().open("tractor-beam-config.json");
-        } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        final ConfigJson configJson;
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        try {
-            configJson = new Gson().fromJson(reader, ConfigJson.class);
-            inputStream.close();
-            reader.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
-            return;
-        }
-
+        // if no URL is saved, ask the user to enter one
         String url = Utils.getStringFromPrefs(this, Consts.EXTRA_JSON);
         if (url == null) {
-            // add the maps into andbtiles
-            for (Map map : configJson.getMaps()) {
-                switch (map.getType()) {
-                    case "internet":
-                        if (map.getEndpoint().endsWith(Consts.EXTENSION_MBTILES))
-                            andbtiles.addRemoteMbilesProvider(map.getEndpoint(), new AndbtilesCallback() {
-                                @Override
-                                public void onSuccess() {
+            setContentView(R.layout.activity_main);
+            final EditText mUrl = (EditText) findViewById(R.id.edit_url);
+            final Button mConfirm = (Button) findViewById(R.id.btn_confirmn);
+            mConfirm.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mConfirm.setEnabled(false);
+                    String url = mUrl.getText().toString();
+                    if (!url.matches(Patterns.WEB_URL.pattern())) {
+                        mUrl.setError(getString(R.string.error_url));
+                        mUrl.requestFocus();
+                        return;
+                    }
+
+                    // hide the keyboard
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(mUrl.getWindowToken(), 0);
+
+                    // parse the tractor-beam-config.json
+                    InputStream inputStream;
+                    try {
+                        inputStream = getAssets().open("tractor-beam-config.json");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        mConfirm.setEnabled(true);
+                        return;
+                    }
+
+                    final ConfigJson configJson;
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                    try {
+                        configJson = new Gson().fromJson(reader, ConfigJson.class);
+                        inputStream.close();
+                        reader.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        mConfirm.setEnabled(false);
+                        return;
+                    }
+
+                    // add the maps into andbtiles
+                    for (Map map : configJson.getMaps()) {
+                        switch (map.getType()) {
+                            case "internet":
+                                if (map.getEndpoint().endsWith(Consts.EXTENSION_MBTILES))
+                                    andbtiles.addRemoteMbilesProvider(map.getEndpoint(), new AndbtilesCallback() {
+                                        @Override
+                                        public void onSuccess() {
+                                            // this is an async task, only load when all maps are loaded
+                                            mapCounter++;
+                                            if (mapCounter == configJson.getMaps().size())
+                                                loadUrl(webView, configJson.getUrl());
+                                        }
+
+                                        @Override
+                                        public void onError(Exception e) {
+                                            mConfirm.setEnabled(false);
+                                            Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                else {
+                                    andbtiles.addRemoteJsonTileProvider(map.getEndpoint(), null, getCacheMode(map.getCacheMode()), new AndbtilesCallback() {
+                                        @Override
+                                        public void onSuccess() {
+                                            // this is an async task, only load when all maps are loaded
+                                            mapCounter++;
+                                            if (mapCounter == configJson.getMaps().size())
+                                                loadUrl(webView, configJson.getUrl());
+                                        }
+
+                                        @Override
+                                        public void onError(Exception e) {
+                                            mConfirm.setEnabled(false);
+                                            Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
+                                break;
+                            case "local":
+                                try {
+                                    andbtiles.addLocalMbTilesProvider(map.getEndpoint());
                                     // this is an async task, only load when all maps are loaded
                                     mapCounter++;
                                     if (mapCounter == configJson.getMaps().size())
                                         loadUrl(webView, configJson.getUrl());
-                                }
-
-                                @Override
-                                public void onError(Exception e) {
+                                } catch (AndbtilesException e) {
+                                    mConfirm.setEnabled(false);
                                     Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
-                            });
-                        else {
-                            andbtiles.addRemoteJsonTileProvider(map.getEndpoint(), null, getCacheMode(map.getCacheMode()), new AndbtilesCallback() {
-                                @Override
-                                public void onSuccess() {
-                                    // this is an async task, only load when all maps are loaded
-                                    mapCounter++;
-                                    if (mapCounter == configJson.getMaps().size())
-                                        loadUrl(webView, configJson.getUrl());
-                                }
-
-                                @Override
-                                public void onError(Exception e) {
-                                    Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                                }
-                            });
+                                break;
                         }
-                        break;
-                    case "local":
-                        try {
-                            andbtiles.addLocalMbTilesProvider(map.getEndpoint());
-                            // this is an async task, only load when all maps are loaded
-                            mapCounter++;
-                            if (mapCounter == configJson.getMaps().size())
-                            loadUrl(webView, configJson.getUrl());
-                        } catch (AndbtilesException e) {
-                            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                        break;
+                    }
+                    Utils.setStringToPrefs(MainActivity.this, Consts.EXTRA_JSON, url);
                 }
-            }
-            Utils.setStringToPrefs(this, Consts.EXTRA_JSON, "");
+            });
+            // load the saved URL
         } else
-            // just load the url if the maps from the configJson are already added
-            loadUrl(webView, configJson.getUrl());
+            loadUrl(webView, url);
     }
 
     private void loadUrl(WebView webView, String url) {
