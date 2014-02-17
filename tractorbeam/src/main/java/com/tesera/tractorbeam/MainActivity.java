@@ -5,6 +5,8 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Patterns;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -28,7 +30,6 @@ import java.util.List;
 
 public class MainActivity extends Activity {
 
-    private int mapCounter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,19 +97,28 @@ public class MainActivity extends Activity {
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(mUrl.getWindowToken(), 0);
 
+                    // create handler for UI update
+                    final Handler handler = new Handler() {
+                        @Override
+                        public void handleMessage(Message msg) {
+                            loadUrl(webView, url);
+                            super.handleMessage(msg);
+                        }
+                    };
+
                     // parse the config dile
                     ConfigParser configParser = new ConfigParser();
                     configParser.parseConfigJsonFile(MainActivity.this, andbtiles, url, new OnConfigParsed() {
                         @Override
                         public void onSuccess() {
-                            loadUrl(webView, url);
+                            handler.sendEmptyMessage(0);
                         }
 
                         @Override
                         public void onError(Exception e) {
+                            // no config file available, just load the url
                             e.printStackTrace();
-                            // TODO handle error
-                            // note this is a worker thread, cannot affect UI
+                            handler.sendEmptyMessage(0);
                         }
                     });
                 }
