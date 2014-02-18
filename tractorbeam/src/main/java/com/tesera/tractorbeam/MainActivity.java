@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.tesera.andbtiles.Andbtiles;
 import com.tesera.andbtiles.exceptions.AndbtilesException;
+import com.tesera.andbtiles.pojos.MapItem;
 import com.tesera.andbtiles.utils.Consts;
 import com.tesera.tractorbeam.callbacks.OnConfigParsed;
 import com.tesera.tractorbeam.utils.ConfigParser;
@@ -51,14 +52,27 @@ public class MainActivity extends Activity {
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
+                
+                Uri urlUri = Uri.parse(url);
+                List<String> urlSegments = urlUri.getPathSegments();
+
+                // intercept the geo json request
+                if (url.endsWith(Consts.EXTENSION_GEO_JSON)) {
+                    String mapId = urlSegments.get(urlSegments.size() - 1).replace("." + Consts.EXTENSION_GEO_JSON, "");
+                    MapItem mapItem = andbtiles.getMapById(mapId);
+                    if (mapItem == null)
+                        return null;
+                    if (mapItem.getGeoJsonString() == null || mapItem.getGeoJsonString().length() == 0)
+                        return null;
+                    return new WebResourceResponse("text/plain", "UTF-8", new ByteArrayInputStream(mapItem.getGeoJsonString().getBytes()));
+                }
+
                 // the tile request should matches this format
-                // http://b.tiles.mapbox.com/v3/tesera.CuraH20_Phase2/9/166/183.png
+                // http://b.tiles.mapbox.com/v3/<account>.<map_id>/<z>/<x>/<y>.png
                 if (!url.matches(".*/[0-9]+/[0-9]+/[0-9]+.png"))
                     return super.shouldInterceptRequest(view, url);
 
                 // get the zoom, x and y tile coordinate from the url
-                Uri urlUri = Uri.parse(url);
-                List<String> urlSegments = urlUri.getPathSegments();
                 String y = urlSegments.get(urlSegments.size() - 1).replace(".png", "");
                 String x = urlSegments.get(urlSegments.size() - 2);
                 String z = urlSegments.get(urlSegments.size() - 3);
