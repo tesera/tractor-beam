@@ -21,6 +21,7 @@ Once a url has been entered into tractor beam it will loook for a ``tractor-beam
       {
          "type":"local",
          "endpoint":"path_to_mbtiles_file_on_sd",
+         "geoJsonEndpoint":"path_to_geojson_file_on_sd",
          "cacheMode":"data-only"
       }
    ]
