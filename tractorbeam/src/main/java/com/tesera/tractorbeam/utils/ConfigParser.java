@@ -86,7 +86,7 @@ public class ConfigParser {
                             break;
                         case "local":
                             try {
-                                andbtiles.addLocalMbTilesProvider(map.getEndpoint(), null);
+                                andbtiles.addLocalMbTilesProvider(map.getEndpoint(), map.getGeoJsonEndpoint());
                                 // this is an async task, only load when all maps are loaded
                                 mapCounter++;
                                 if (mapCounter == configJson.getMaps().size())

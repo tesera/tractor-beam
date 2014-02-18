@@ -3,6 +3,7 @@ package com.tesera.tractorbeam.pojos;
 public class Map {
     private String type;
     private String endpoint;
+    private String geoJsonEndpoint;
     private String cacheMode;
 
     public String getType() {
@@ -19,6 +20,14 @@ public class Map {
 
     public void setEndpoint(String endpoint) {
         this.endpoint = endpoint;
+    }
+
+    public String getGeoJsonEndpoint() {
+        return geoJsonEndpoint;
+    }
+
+    public void setGeoJsonEndpoint(String geoJsonEndpoint) {
+        this.geoJsonEndpoint = geoJsonEndpoint;
     }
 
     public String getCacheMode() {
