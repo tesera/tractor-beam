@@ -16,7 +16,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.tesera.andbtiles.Andbtiles;
 import com.tesera.andbtiles.exceptions.AndbtilesException;
@@ -52,7 +51,7 @@ public class MainActivity extends Activity {
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-                
+
                 Uri urlUri = Uri.parse(url);
                 List<String> urlSegments = urlUri.getPathSegments();
 
@@ -84,7 +83,6 @@ public class MainActivity extends Activity {
                     return tileBytes == null ? null : new WebResourceResponse("image/png", "UTF-8", new ByteArrayInputStream(tileBytes));
                 } catch (AndbtilesException e) {
                     e.printStackTrace();
-                    Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                     return null;
                 }
             }
