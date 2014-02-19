@@ -5,6 +5,9 @@ public class Map {
     private String endpoint;
     private String geoJsonEndpoint;
     private String cacheMode;
+    private String boundingBox;
+    private int minZoom;
+    private int maxZoom;
 
     public String getType() {
         return type;
@@ -36,5 +39,29 @@ public class Map {
 
     public void setCacheMode(String cacheMode) {
         this.cacheMode = cacheMode;
+    }
+
+    public String getBoundingBox() {
+        return boundingBox;
+    }
+
+    public void setBoundingBox(String boundingBox) {
+        this.boundingBox = boundingBox;
+    }
+
+    public int getMinZoom() {
+        return minZoom;
+    }
+
+    public void setMinZoom(int minZoom) {
+        this.minZoom = minZoom;
+    }
+
+    public int getMaxZoom() {
+        return maxZoom;
+    }
+
+    public void setMaxZoom(int maxZoom) {
+        this.maxZoom = maxZoom;
     }
 }

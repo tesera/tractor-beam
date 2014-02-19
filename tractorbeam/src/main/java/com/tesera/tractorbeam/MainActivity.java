@@ -118,7 +118,9 @@ public class MainActivity extends Activity {
                         }
                     };
 
-                    // parse the config dile
+                    //save the url
+                    Utils.setStringToPrefs(MainActivity.this, Consts.EXTRA_JSON, url);
+                    // parse the config file
                     ConfigParser configParser = new ConfigParser();
                     configParser.parseConfigJsonFile(MainActivity.this, andbtiles, url, new OnConfigParsed() {
                         @Override

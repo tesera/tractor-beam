@@ -68,7 +68,9 @@ public class ConfigParser {
                                     }
                                 });
                             else {
-                                andbtiles.addRemoteJsonTileProvider(map.getEndpoint(), null, getCacheMode(map.getCacheMode()), new AndbtilesCallback() {
+                                // TODO add bound box string
+                                andbtiles.addRemoteJsonTileProvider(map.getEndpoint(), null, getCacheMode(map.getCacheMode()),
+                                        map.getMinZoom(), map.getMaxZoom(), new AndbtilesCallback() {
                                     @Override
                                     public void onSuccess() {
                                         // this is an async task, only load when all maps are loaded
@@ -97,7 +99,6 @@ public class ConfigParser {
                             break;
                     }
                 }
-                Utils.setStringToPrefs(context, Consts.EXTRA_JSON, url);
             }
         }).start();
     }
