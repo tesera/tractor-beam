@@ -19,6 +19,14 @@ Once a url has been entered into tractor beam it will loook for a ``tractor-beam
          "cacheMode":"on-demand"
       },
       {
+         "type":"internet",
+         "endpoint":"http://api.tiles.mapbox.com/v3/[account].[mapid].json",
+         "cacheMode":"full",
+         "minZoom":8,
+         "maxZoom":12,
+         "boundingBox":"southwest_lng,southwest_lat,northeast_lng,northeast_lat"
+      },
+      {
          "type":"local",
          "endpoint":"path_to_mbtiles_file_on_sd",
          "geoJsonEndpoint":"path_to_geojson_file_on_sd",
