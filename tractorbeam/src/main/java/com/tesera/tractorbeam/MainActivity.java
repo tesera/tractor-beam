@@ -12,10 +12,12 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
+import android.webkit.WebStorage;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
+import android.util.Log;
 
 import com.tesera.andbtiles.Andbtiles;
 import com.tesera.andbtiles.exceptions.AndbtilesException;
@@ -26,10 +28,11 @@ import com.tesera.tractorbeam.utils.ConfigParser;
 import com.tesera.tractorbeam.utils.Utils;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.util.List;
 
 public class MainActivity extends Activity {
-
+    private static final String TAG = "Tractor Beam WebView";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,20 +40,25 @@ public class MainActivity extends Activity {
 
         // initialize the andbtiles library
         final Andbtiles andbtiles = new Andbtiles(this);
+
         // enable setup the webview
         final WebView webView = new WebView(this);
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
-        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         webSettings.setAppCacheEnabled(true);
         webSettings.setAppCachePath(getCacheDir().getAbsolutePath());
-        // enable chromium debugging for KitKat
+        webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE); // disable simple cache index... we use appcache
+
+
+        //enable chromium debugging for KitKat
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
             WebView.setWebContentsDebuggingEnabled(true);
 
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
+
+                Log.v(TAG, "loading :" + url);
 
                 Uri urlUri = Uri.parse(url);
                 List<String> urlSegments = urlUri.getPathSegments();
@@ -113,7 +121,7 @@ public class MainActivity extends Activity {
                     final Handler handler = new Handler() {
                         @Override
                         public void handleMessage(Message msg) {
-                            loadUrl(webView, url);
+                            loadUrl(webView, url, true);
                             super.handleMessage(msg);
                         }
                     };
@@ -135,15 +143,22 @@ public class MainActivity extends Activity {
                             handler.sendEmptyMessage(0);
                         }
                     });
+
                 }
             });
             // load the saved URL
         } else
-            loadUrl(webView, url);
+            loadUrl(webView, url, false);
     }
 
-    private void loadUrl(WebView webView, String url) {
+    private void loadUrl(WebView webView, String url, Boolean cache) {
         setContentView(webView);
         webView.loadUrl(url);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        this.finish();
     }
 }
