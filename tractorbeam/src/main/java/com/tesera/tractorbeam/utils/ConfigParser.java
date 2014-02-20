@@ -68,9 +68,8 @@ public class ConfigParser {
                                     }
                                 });
                             else {
-                                // TODO add bound box string
                                 andbtiles.addRemoteJsonTileProvider(map.getEndpoint(), null, getCacheMode(map.getCacheMode()),
-                                        map.getMinZoom(), map.getMaxZoom(), new AndbtilesCallback() {
+                                        map.getBoundingBox(), map.getMinZoom(), map.getMaxZoom(), new AndbtilesCallback() {
                                     @Override
                                     public void onSuccess() {
                                         // this is an async task, only load when all maps are loaded
