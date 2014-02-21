@@ -46,6 +46,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -462,8 +464,29 @@ public class Andbtiles {
                     Cursor cursor = downloadManager.query(query);
                     if (cursor.moveToFirst()) {
                         int columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
-                        if (DownloadManager.STATUS_SUCCESSFUL == cursor.getInt(columnIndex))
+                        if (DownloadManager.STATUS_SUCCESSFUL == cursor.getInt(columnIndex)) {
+                            // find the file and save the map item to the database
+                            String uriString = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
+                            File mbTilesFile;
+                            try {
+                                mbTilesFile = new File(new URI(uriString).getPath());
+                            } catch (URISyntaxException e) {
+                                e.printStackTrace();
+                                callback.onError(e);
+                                return;
+                            }
+
+                            // create new map item
+                            MapItem mapItem = new MapItem();
+                            mapItem.setId(mbTilesFile.getName());
+                            mapItem.setPath(mbTilesFile.getAbsolutePath());
+                            mapItem.setName(mbTilesFile.getName());
+                            mapItem.setCacheMode(Consts.CACHE_DATA);
+                            mapItem.setSize(mbTilesFile.length());
+                            insertMapItem(mapItem);
                             callback.onSuccess();
+                        }
+
                     } else
                         callback.onError(new AndbtilesException(
                                 String.format("Cannot download %s", urlToFile)));
@@ -628,8 +651,6 @@ public class Andbtiles {
                             case Consts.CACHE_DATA:
                                 if (mapItem.getPath() == null)
                                     return "Map doesn't have private data: " + params[1];
-                                // insert the file in the database
-                                insertMapItem(mapItem);
                                 downloadMbTilesFile(mContext, mapItem.getPath(), mCallback);
                                 break;
                         }
