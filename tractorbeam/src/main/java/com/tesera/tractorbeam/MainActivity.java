@@ -2,7 +2,6 @@ package com.tesera.tractorbeam;
 
 import android.app.Activity;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,26 +9,18 @@ import android.os.Message;
 import android.util.Patterns;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
-import android.webkit.WebStorage;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
-import android.util.Log;
 
 import com.tesera.andbtiles.Andbtiles;
-import com.tesera.andbtiles.exceptions.AndbtilesException;
 import com.tesera.andbtiles.pojos.MapItem;
 import com.tesera.andbtiles.utils.Consts;
 import com.tesera.tractorbeam.callbacks.OnConfigParsed;
-import com.tesera.tractorbeam.utils.ConfigParser;
+import com.tesera.tractorbeam.parsers.ConfigParser;
 import com.tesera.tractorbeam.utils.Utils;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.util.List;
+import com.tesera.tractorbeam.webviews.MapViewClient;
 
 public class MainActivity extends Activity {
     private static final String TAG = "Tractor Beam WebView";
@@ -40,6 +31,8 @@ public class MainActivity extends Activity {
 
         // initialize the andbtiles library
         final Andbtiles andbtiles = new Andbtiles(this);
+        for (MapItem mapItem : andbtiles.getMaps())
+            System.out.println(mapItem.getId());
 
         // enable setup the webview
         final WebView webView = new WebView(this);
@@ -49,52 +42,11 @@ public class MainActivity extends Activity {
         webSettings.setAppCachePath(getCacheDir().getAbsolutePath());
         webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE); // disable simple cache index... we use appcache
 
-
         //enable chromium debugging for KitKat
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
             WebView.setWebContentsDebuggingEnabled(true);
 
-        webView.setWebViewClient(new WebViewClient() {
-            @Override
-            public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-
-                Log.v(TAG, "loading :" + url);
-
-                Uri urlUri = Uri.parse(url);
-                List<String> urlSegments = urlUri.getPathSegments();
-
-                // intercept the geo json request
-                if (url.endsWith(Consts.EXTENSION_GEO_JSON)) {
-                    String mapId = urlSegments.get(urlSegments.size() - 1).replace("." + Consts.EXTENSION_GEO_JSON, "");
-                    MapItem mapItem = andbtiles.getMapById(mapId);
-                    if (mapItem == null)
-                        return null;
-                    if (mapItem.getGeoJsonString() == null || mapItem.getGeoJsonString().length() == 0)
-                        return null;
-                    return new WebResourceResponse("text/plain", "UTF-8", new ByteArrayInputStream(mapItem.getGeoJsonString().getBytes()));
-                }
-
-                // the tile request should matches this format
-                // http://b.tiles.mapbox.com/v3/<account>.<map_id>/<z>/<x>/<y>.png
-                if (!url.matches(".*/[0-9]+/[0-9]+/[0-9]+.png"))
-                    return super.shouldInterceptRequest(view, url);
-
-                // get the zoom, x and y tile coordinate from the url
-                String y = urlSegments.get(urlSegments.size() - 1).replace(".png", "");
-                String x = urlSegments.get(urlSegments.size() - 2);
-                String z = urlSegments.get(urlSegments.size() - 3);
-                String mapId = urlSegments.get(urlSegments.size() - 4);
-
-                try {
-                    // try to find the tile in the database, otherwise use the web request
-                    byte[] tileBytes = andbtiles.getTile(mapId, Integer.valueOf(z), Integer.valueOf(x), Integer.valueOf(y));
-                    return tileBytes == null ? null : new WebResourceResponse("image/png", "UTF-8", new ByteArrayInputStream(tileBytes));
-                } catch (AndbtilesException e) {
-                    e.printStackTrace();
-                    return null;
-                }
-            }
-        });
+        webView.setWebViewClient(new MapViewClient(andbtiles));
 
         // if no URL is saved, ask the user to enter one
         String url = Utils.getStringFromPrefs(this, Consts.EXTRA_JSON);

@@ -1,4 +1,4 @@
-package com.tesera.tractorbeam.utils;
+package com.tesera.tractorbeam.parsers;
 
 import android.content.Context;
 
