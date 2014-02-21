@@ -15,12 +15,11 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.tesera.andbtiles.Andbtiles;
-import com.tesera.andbtiles.pojos.MapItem;
 import com.tesera.andbtiles.utils.Consts;
 import com.tesera.tractorbeam.callbacks.OnConfigParsed;
+import com.tesera.tractorbeam.clients.MapViewClient;
 import com.tesera.tractorbeam.parsers.ConfigParser;
 import com.tesera.tractorbeam.utils.Utils;
-import com.tesera.tractorbeam.webviews.MapViewClient;
 
 public class MainActivity extends Activity {
     private static final String TAG = "Tractor Beam WebView";
@@ -31,8 +30,6 @@ public class MainActivity extends Activity {
 
         // initialize the andbtiles library
         final Andbtiles andbtiles = new Andbtiles(this);
-        for (MapItem mapItem : andbtiles.getMaps())
-            System.out.println(mapItem.getId());
 
         // enable setup the webview
         final WebView webView = new WebView(this);
@@ -57,15 +54,14 @@ public class MainActivity extends Activity {
             mConfirm.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mConfirm.setEnabled(false);
                     final String url = mUrl.getText().toString();
                     if (!url.matches(Patterns.WEB_URL.pattern())) {
                         mUrl.setError(getString(R.string.error_url));
                         mUrl.requestFocus();
                         return;
                     }
-
                     // hide the keyboard
+                    mConfirm.setEnabled(false);
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(mUrl.getWindowToken(), 0);
 

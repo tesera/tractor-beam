@@ -488,8 +488,7 @@ public class Andbtiles {
                         }
 
                     } else
-                        callback.onError(new AndbtilesException(
-                                String.format("Cannot download %s", urlToFile)));
+                        callback.onError(new AndbtilesException(String.format("Cannot download %s", urlToFile)));
                 }
                 // unregister the receiver since the download is done
                 context.unregisterReceiver(this);
@@ -652,7 +651,7 @@ public class Andbtiles {
                                 if (mapItem.getPath() == null)
                                     return "Map doesn't have private data: " + params[1];
                                 downloadMbTilesFile(mContext, mapItem.getPath(), mCallback);
-                                break;
+                                return "";
                         }
                         return null;
                     }
@@ -692,7 +691,7 @@ public class Andbtiles {
         protected void onPostExecute(String error) {
             if (error == null)
                 mCallback.onSuccess();
-            else
+            else if (error.length() != 0)
                 mCallback.onError(new AndbtilesException(error));
             super.onPostExecute(error);
         }
