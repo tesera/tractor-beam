@@ -19,7 +19,8 @@
             android:name="com.tesera.tractorbeam.MainActivity"
             android:label="@string/app_name"
             android:hardwareAccelerated="true"
-            android:configChanges="orientation|screenSize|keyboardHidden">
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

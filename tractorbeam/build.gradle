@@ -15,15 +15,8 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_7
         targetCompatibility JavaVersion.VERSION_1_7
     }
-//    buildTypes {
-//        release {
-//            runProguard false
-//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-//        }
-//    }
 }
 
 dependencies {
-//    compile 'com.tesera.andbtiles:library:1.0.3'
     compile project(":library")
 }

@@ -66,6 +66,7 @@ public class Andbtiles {
     private Gson mGson;
     private HashMap<String, MapItem> mRecentMaps;
     private HashMap<String, SQLiteDatabase> mRecentDatabases;
+    private boolean mDatabaseCreated;
 
     /**
      * Class constructor.
@@ -450,7 +451,6 @@ public class Andbtiles {
         // delete previous database because conflicts occur
         String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator
                 + Consts.FOLDER_ROOT + File.separator + FilenameUtils.getName(urlToFile);
-        System.out.println(path);
         File database = new File(path);
         if (database.exists())
             database.delete();
@@ -654,7 +654,10 @@ public class Andbtiles {
                                 mapItem.setTileJsonString(gson.toJson(tileJson, TileJson.class));
                                 // insert metadata
                                 mapItem.setPath(path);
-                                insertMetadata(mapItem);
+                                if (!mDatabaseCreated) {
+                                    insertMetadata(mapItem);
+                                    mDatabaseCreated = true;
+                                }
                                 // start harvesting
                                 Intent harvesterService = new Intent(mContext, HarvesterService.class);
                                 harvesterService.putExtra(Consts.EXTRA_JSON, new Gson().toJson(mapItem, MapItem.class));

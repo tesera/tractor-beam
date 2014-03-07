@@ -9,6 +9,7 @@ import com.tesera.andbtiles.exceptions.AndbtilesException;
 import com.tesera.andbtiles.utils.Consts;
 import com.tesera.tractorbeam.callbacks.OnConfigParsed;
 import com.tesera.tractorbeam.pojos.ConfigJson;
+import com.tesera.tractorbeam.pojos.Extents;
 import com.tesera.tractorbeam.pojos.Map;
 
 import java.io.BufferedReader;
@@ -67,22 +68,41 @@ public class ConfigParser {
                                         callback.onError(e);
                                     }
                                 });
-                            else {
-                                andbtiles.addRemoteJsonTileProvider(map.getEndpoint(), null, getCacheMode(map.getCacheMode()),
-                                        map.getExtents().get(0).getBoundingBox(), map.getExtents().get(0).getMinZoom(), map.getExtents().get(0).getMaxZoom(), new AndbtilesCallback() {
-                                    @Override
-                                    public void onSuccess() {
-                                        // this is an async task, only load when all maps are loaded
-                                        mapCounter++;
-                                        if (mapCounter == configJson.getMaps().size())
-                                            callback.onSuccess();
-                                    }
+                            else if (map.getExtents() != null) {
+                                for (Extents extent : map.getExtents()) {
+                                    andbtiles.addRemoteJsonTileProvider(map.getEndpoint(), null, getCacheMode(map.getCacheMode()),
+                                            extent.getBoundingBox(), extent.getMinZoom(), extent.getMaxZoom(), new AndbtilesCallback() {
+                                                @Override
+                                                public void onSuccess() {
+                                                    // this is an async task, only load when all maps are loaded
+                                                    mapCounter++;
+                                                    if (mapCounter == configJson.getMaps().size())
+                                                        callback.onSuccess();
+                                                }
 
-                                    @Override
-                                    public void onError(Exception e) {
-                                        callback.onError(e);
-                                    }
-                                });
+                                                @Override
+                                                public void onError(Exception e) {
+                                                    callback.onError(e);
+                                                }
+                                            }
+                                    );
+                                }
+                            } else {
+                                andbtiles.addRemoteJsonTileProvider(map.getEndpoint(), null, getCacheMode(map.getCacheMode()), new AndbtilesCallback() {
+                                            @Override
+                                            public void onSuccess() {
+                                                // this is an async task, only load when all maps are loaded
+                                                mapCounter++;
+                                                if (mapCounter == configJson.getMaps().size())
+                                                    callback.onSuccess();
+                                            }
+
+                                            @Override
+                                            public void onError(Exception e) {
+                                                callback.onError(e);
+                                            }
+                                        }
+                                );
                             }
                             break;
                         case "local":
