@@ -1,13 +1,14 @@
 package com.tesera.tractorbeam.pojos;
 
+import java.util.List;
+
 public class Map {
     private String type;
     private String endpoint;
     private String geoJsonEndpoint;
     private String cacheMode;
-    private String boundingBox;
-    private int minZoom;
-    private int maxZoom;
+    private List<Extents> extents;
+
 
     public String getType() {
         return type;
@@ -41,27 +42,11 @@ public class Map {
         this.cacheMode = cacheMode;
     }
 
-    public String getBoundingBox() {
-        return boundingBox;
+    public List<Extents> getExtents() {
+        return extents;
     }
 
-    public void setBoundingBox(String boundingBox) {
-        this.boundingBox = boundingBox;
-    }
-
-    public int getMinZoom() {
-        return minZoom;
-    }
-
-    public void setMinZoom(int minZoom) {
-        this.minZoom = minZoom;
-    }
-
-    public int getMaxZoom() {
-        return maxZoom;
-    }
-
-    public void setMaxZoom(int maxZoom) {
-        this.maxZoom = maxZoom;
+    public void setExtents(List<Extents> extents) {
+        this.extents = extents;
     }
 }

@@ -69,7 +69,7 @@ public class ConfigParser {
                                 });
                             else {
                                 andbtiles.addRemoteJsonTileProvider(map.getEndpoint(), null, getCacheMode(map.getCacheMode()),
-                                        map.getBoundingBox(), map.getMinZoom(), map.getMaxZoom(), new AndbtilesCallback() {
+                                        map.getExtents().get(0).getBoundingBox(), map.getExtents().get(0).getMinZoom(), map.getExtents().get(0).getMaxZoom(), new AndbtilesCallback() {
                                     @Override
                                     public void onSuccess() {
                                         // this is an async task, only load when all maps are loaded
