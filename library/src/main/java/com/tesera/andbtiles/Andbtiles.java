@@ -457,6 +457,8 @@ public class Andbtiles {
         Intent downloadIntent = new Intent(mContext, DownloadService.class);
         downloadIntent.putExtra(Consts.EXTRA_JSON, urlToFile);
         mContext.startService(downloadIntent);
+
+        callback.onSuccess();
     }
 
     private byte[] getTileBytes(int z, int x, int y, TileJson tileJson) {
