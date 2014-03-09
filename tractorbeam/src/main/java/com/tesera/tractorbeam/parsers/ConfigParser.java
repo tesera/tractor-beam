@@ -54,7 +54,7 @@ public class ConfigParser {
                     switch (map.getType()) {
                         case "internet":
                             if (map.getEndpoint().endsWith(Consts.EXTENSION_MBTILES))
-                                andbtiles.addRemoteMbilesProvider(map.getEndpoint(), new AndbtilesCallback() {
+                                andbtiles.addRemoteMbTilesProvider(map.getEndpoint(), new AndbtilesCallback() {
                                     @Override
                                     public void onSuccess() {
                                         // this is an async task, only load when all maps are loaded

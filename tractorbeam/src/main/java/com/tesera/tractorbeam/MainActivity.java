@@ -39,7 +39,7 @@ public class MainActivity extends Activity {
         webSettings.setAppCachePath(getCacheDir().getAbsolutePath());
         webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE); // disable simple cache index... we use appcache
 
-        //enable chromium debugging for KitKat
+        // enable chromium debugging for KitKat
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
             WebView.setWebContentsDebuggingEnabled(true);
 
