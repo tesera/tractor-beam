@@ -127,6 +127,5 @@ public class DownloadService extends IntentService {
         mapsDatabase.open();
         mapsDatabase.insertItems(mapItem);
         mapsDatabase.close();
-        System.out.println("inserted");
     }
 }

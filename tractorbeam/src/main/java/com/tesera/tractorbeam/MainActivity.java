@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.tesera.andbtiles.Andbtiles;
+import com.tesera.andbtiles.pojos.MapItem;
 import com.tesera.andbtiles.utils.Consts;
 import com.tesera.tractorbeam.callbacks.OnConfigParsed;
 import com.tesera.tractorbeam.clients.MapViewClient;
