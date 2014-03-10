@@ -22,9 +22,18 @@ Once a url has been entered into tractor beam it will loook for a ``tractor-beam
          "type":"internet",
          "endpoint":"http://api.tiles.mapbox.com/v3/[account].[mapid].json",
          "cacheMode":"full",
-         "minZoom":8,
-         "maxZoom":12,
-         "boundingBox":"southwest_lng,southwest_lat,northeast_lng,northeast_lat"
+         "extents":[
+            {
+               "boundingBox":"-85.233,40.0528,-64.4029,48.8575",
+               "minZoom":"7",
+               "maxZoom":"8"
+            },
+            {
+               "boundingBox":"-14.9644,50.4925,1.3832,57.0228",
+               "minZoom":"7",
+               "maxZoom":"8"
+            }
+         ]
       },
       {
          "type":"local",
